@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
@@ -28,6 +30,12 @@ public class ClienteController {
     public ResponseEntity<ClienteDto> buscarClientePorCpf(@PathVariable("cpf") String cpf) {
         ClienteDto cliente = service.buscarClientePorCpf(cpf);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ClienteDto>> listarClientes() {
+        List<ClienteDto> clientes = service.listarTodos();
+        return ResponseEntity.ok(clientes);
     }
 }
 
