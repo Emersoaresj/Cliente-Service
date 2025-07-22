@@ -24,7 +24,7 @@ public class Cliente {
     private String estado;
 
     public boolean cpfFormatoValido() {
-        return cpfCliente != null && cpfCliente.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}");
+        return cpfCliente != null && cpfCliente.matches("\\d{11}");
     }
 
     public boolean nascimentoNaoEhFuturo() {

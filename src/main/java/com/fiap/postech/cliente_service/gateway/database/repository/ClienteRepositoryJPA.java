@@ -11,4 +11,6 @@ public interface ClienteRepositoryJPA extends JpaRepository<ClienteEntity, Integ
 
     Optional<ClienteEntity> findByCpfCliente(String cpf);
 
+    void deleteByCpfCliente(String cpf);
+
 }
