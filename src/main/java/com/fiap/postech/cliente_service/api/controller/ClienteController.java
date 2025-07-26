@@ -1,6 +1,5 @@
 package com.fiap.postech.cliente_service.api.controller;
 
-
 import com.fiap.postech.cliente_service.api.dto.AtualizaClienteRequest;
 import com.fiap.postech.cliente_service.api.dto.CadastraClienteRequest;
 import com.fiap.postech.cliente_service.api.dto.ClienteDto;
@@ -20,7 +19,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,19 +33,28 @@ public class ClienteController {
 
     @Operation(summary = "Cadastrar um novo cliente")
     @ApiResponses(value ={
-            @ApiResponse(responseCode = "200", description = "Cliente cadastrado com sucesso",content = @Content(
+            @ApiResponse(responseCode = "201", description = "Cliente cadastrado com sucesso", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ResponseDto.class),
                     examples = @ExampleObject(value = "{\"mensagem\": \"Cliente cadastrado com sucesso!\"}"))),
 
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = MethodArgumentNotValidException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Dados inválidos!\"}"))),
+                    examples = @ExampleObject(value = """
+                                {
+                                    "timestamp": "2024-07-24T10:00:00",
+                                    "status": 400,
+                                    "errors": {
+                                        "nomeCliente": "Nome obrigatório",
+                                        "cpfCliente": "CPF obrigatório"
+                                    }
+                                }
+                            """))),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErroInternoException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))})
+                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))
+    })
     @PostMapping("/cadastrar")
     public ResponseEntity<ResponseDto> cadastraCliente(@Valid @RequestBody CadastraClienteRequest request) {
         ResponseDto cadastro = service.cadastraCliente(request);
@@ -77,15 +84,24 @@ public class ClienteController {
                     examples = @ExampleObject(value = "{\"mensagem\": \"Cliente não encontrado!\"}"))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = MethodArgumentNotValidException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Dados inválidos!\"}"))),
+                    examples = @ExampleObject(value = """
+                                {
+                                    "timestamp": "2024-07-24T10:00:00",
+                                    "status": 400,
+                                    "errors": {
+                                        "cpfCliente": "CPF obrigatório"
+                                    }
+                                }
+                            """))),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErroInternoException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))})
+                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))
+    })
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<ClienteDto> buscarClientePorCpf(@Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
-                                                              @PathVariable("cpf") String cpf) {
+    public ResponseEntity<ClienteDto> buscarClientePorCpf(
+            @Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
+            @PathVariable("cpf") String cpf) {
         ClienteDto cliente = service.buscarClientePorCpf(cpf);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
     }
@@ -112,12 +128,21 @@ public class ClienteController {
                     examples = @ExampleObject(value = "{\"mensagem\": \"Cliente não encontrado!\"}"))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = MethodArgumentNotValidException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Dados inválidos!\"}"))),
+                    examples = @ExampleObject(value = """
+                                {
+                                    "timestamp": "2024-07-24T10:00:00",
+                                    "status": 400,
+                                    "errors": {
+                                        "nomeCliente": "Nome obrigatório",
+                                        "cpfCliente": "CPF obrigatório"
+                                    }
+                                }
+                            """))),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErroInternoException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))})
+                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))
+    })
     @GetMapping
     public ResponseEntity<List<ClienteDto>> listarClientes() {
         List<ClienteDto> clientes = service.listarTodos();
@@ -135,30 +160,55 @@ public class ClienteController {
                     examples = @ExampleObject(value = "{\"mensagem\": \"Cliente não encontrado!\"}"))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = MethodArgumentNotValidException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Dados inválidos!\"}"))),
+                    examples = @ExampleObject(value = """
+                                {
+                                    "timestamp": "2024-07-24T10:00:00",
+                                    "status": 400,
+                                    "errors": {
+                                        "nomeCliente": "Nome obrigatório",
+                                        "cpfCliente": "CPF obrigatório"
+                                    }
+                                }
+                            """))),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErroInternoException.class),
-                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))})
+                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))
+    })
     @PutMapping("/cpf/{cpf}")
-    public ResponseEntity<ResponseDto> atualizarCliente(@Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
-                                                            @PathVariable("cpf") String cpf, @Valid @RequestBody AtualizaClienteRequest request) {
+    public ResponseEntity<ResponseDto> atualizarCliente(
+            @Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
+            @PathVariable("cpf") String cpf,
+            @Valid @RequestBody AtualizaClienteRequest request) {
         ResponseDto atualizado = service.atualizarClientePorCpf(cpf, request);
         return ResponseEntity.status(HttpStatus.OK).body(atualizado);
     }
 
     @Operation(summary = "Deletar cliente pelo CPF")
     @ApiResponses(value ={
-            @ApiResponse(responseCode = "204"),
+            @ApiResponse(responseCode = "204", description = "Cliente deletado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")})
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(value = """
+                                {
+                                    "timestamp": "2024-07-24T10:00:00",
+                                    "status": 400,
+                                    "errors": {
+                                        "cpfCliente": "CPF obrigatório"
+                                    }
+                                }
+                            """))),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErroInternoException.class),
+                    examples = @ExampleObject(value = "{\"mensagem\": \"Erro interno!\"}")))
+    })
     @DeleteMapping("/cpf/{cpf}")
-    public ResponseEntity<Void> deletarCliente(@Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
-                                                   @PathVariable("cpf") String cpf) {
+    public ResponseEntity<Void> deletarCliente(
+            @Parameter(description = "CPF do cliente (apenas números)", example = "12345678901")
+            @PathVariable("cpf") String cpf) {
         service.deletarClientePorCpf(cpf);
         return ResponseEntity.noContent().build();
     }
-
 }
-
